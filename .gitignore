@@ -5,7 +5,7 @@ server/.env
 server/.env.*
 
 # Firebase service account key
-server/serviceAccountKey.json
+server/serviceAccount.life-record-keeper-a.json
 
 # ENV files
 .env
