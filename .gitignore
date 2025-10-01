@@ -1,0 +1,16 @@
+# Environment variables
+client/.env
+client/.env.*
+server/.env
+server/.env.*
+
+# Firebase service account key
+server/serviceAccountKey.json
+
+# ENV files
+.env
+.env.local
+coverage/
+
+# Dependency directories
+node_modules/

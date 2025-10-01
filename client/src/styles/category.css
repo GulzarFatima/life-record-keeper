@@ -1,0 +1,61 @@
+.category-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  .category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .category-title {
+    margin: 0;
+  }
+  
+  .add-record-btn {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+  }
+  
+  .records-list {
+    display: grid;
+    gap: 12px;
+  }
+  
+  .record-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  
+  .record-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .record-meta {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+  
+  .record-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+  }
+  
+  .record-actions button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+  
