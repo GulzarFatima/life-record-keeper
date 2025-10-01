@@ -14,3 +14,4 @@ coverage/
 
 # Dependency directories
 node_modules/
+server/serviceAccount.life-record-keeper-a.json
