@@ -1,0 +1,132 @@
+.manage {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .manage-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .manage-crumbs {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--ink);
+  }
+  
+  .manage-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-danger {
+    color: #b42318;
+    background: transparent;
+    border: 1px solid #f2b8b5;
+  }
+  
+  .btn-danger:hover { background: #fff5f5; }
+  
+  .manage-body {
+    background: #edf3f5;
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  
+  .hint-inline {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  
+  .upload-row {
+    margin: 12px 0 8px 0;
+  }
+  
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  
+  .doc-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px;
+  }
+  
+
+.doc-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: block;
+    background: var(--surface-2, #f6f8fa);
+  }
+  
+  .doc-thumb-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+  
+  .doc-thumb-img.fallback {
+    object-fit: contain;
+    opacity: 0.7;
+    padding: 6px;
+  }
+  
+  
+  .doc-kind {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  
+  .doc-name {
+    font-weight: 600;
+    margin: 4px 0 6px 0;
+  }
+  
+  .doc-links {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .doc-link {
+    background: transparent;
+    border: none;
+    color: #0A587A;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .manage-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  
+  @media (max-width: 860px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  

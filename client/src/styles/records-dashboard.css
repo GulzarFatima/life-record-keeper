@@ -1,0 +1,22 @@
+.dashboard-wrap { max-width: 1080px; margin: 0 auto; }
+.dashboard-card { background: #edf3f5; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.dashboard-head { display:flex; align-items:center; justify-content:space-between; }
+.dashboard-title { margin:0; color:#0A587A; font-size:1.15rem; }
+.dashboard-tools { display:flex; gap:16px; font-weight:600; }
+.dashboard-tool { color:#0A587A; cursor:pointer; }
+
+.edu-list { display:grid; gap:12px; margin-top:12px; }
+.edu-item { background:#fff; border:1px solid var(--line); border-radius: var(--radius); padding:14px; }
+.edu-grid { display:grid; grid-template-columns: 80px 1fr 1fr; gap:16px; align-items:start; }
+.edu-thumb { width:80px; height:80px; background:#f6f8fa; border:1px solid var(--line); border-radius: var(--radius); }
+.edu-col h4 { margin:0 0 6px 0; }
+.edu-meta { margin:0; padding:0; list-style:none; color:var(--ink); }
+.edu-meta li { margin:3px 0; }
+.edu-foot { display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid var(--line); margin-top:10px; color:var(--muted); }
+.edu-actions { display:flex; gap:18px; }
+.edu-link { background:transparent; border:none; color:#0A587A; font-weight:600; cursor:pointer; padding:0; }
+
+@media (max-width: 800px) {
+  .edu-grid { grid-template-columns: 1fr; }
+  .dashboard-tools { display:none; }
+}
