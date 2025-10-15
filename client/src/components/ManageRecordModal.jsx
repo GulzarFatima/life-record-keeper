@@ -383,38 +383,27 @@ export default function ManageRecordModal({ recordId, onClose, onSaved }) {
                             )}
                             
                             <button
-                              type="button"
-                              className="doc-link"
-
-                              onClick={async (e) => {
+                            type="button"
+                            className="doc-link"
+                            onClick={async (e) => {
                               e.preventDefault();
                               e.stopPropagation();
                               if (!confirm("Delete this document?")) return;
 
                               try {
-                                const docId = d._id || d.id; 
-                                if (docId) {
-                                  await api.deleteDocument(recordId, docId);
-                                }
-                               
-                                setV(prev => ({
-                                  ...prev,
-                                  documents: (prev.documents || []).filter((_, i) => i !== idx),
-                                }));
+                                const key = d._id || d.id || d.filename;
+                                if (!key) throw new Error("Missing document id.");
 
+                                await api.deleteDocument(recordId, key);
+                                await refresh(); 
                               } catch (err) {
                                 setErr(err?.message || "Delete failed.");
-
-                              } finally {
-                        
-                                await refresh();
-
                               }
                             }}
+                          >
+                            Delete
+                          </button>
 
-                            >
-                              Delete
-                            </button>
                           </div>
                         </div>
                       );
