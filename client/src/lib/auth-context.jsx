@@ -18,6 +18,8 @@ import {
   deleteUser,
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp, deleteDoc  } from "firebase/firestore";
+import { getIdTokenResult } from "firebase/auth";
+
 
 export const AuthCtx = createContext(null);
 
@@ -25,48 +27,80 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null); // { uid, email, role, name, emailVerified }
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      // 1) Set base user immediately so redirects can happen
-      if (firebaseUser) {
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
+      try {
+        if (!firebaseUser) {
+          setUser(null);
+          return;
+        }
+  
+        // Force a fresh token so new claims are included immediately
+        await firebaseUser.getIdToken(true);
+        const tokenResult = await getIdTokenResult(firebaseUser);
+  
+        // 1) Prefer custom claim
+        let role =
+          tokenResult?.claims?.role ||
+          (tokenResult?.claims?.admin ? "admin" : "");
+  
+        // 2) Fallback to Firestore
+        if (!role) {
+          try {
+            const roleSnap = await getDoc(doc(db, "roles", firebaseUser.uid));
+            role = roleSnap.exists() ? roleSnap.data().role : "user";
+          } catch {
+            role = "user";
+          }
+        }
+  
+        // 3) Check active flag (Firestore)
+        let active = true;
+        try {
+          const userSnap = await getDoc(doc(db, "users", firebaseUser.uid));
+          active = userSnap.exists() ? userSnap.data().active !== false : true;
+        } catch {
+          active = true;
+        }
+  
+        if (!active) {
+          await signOut(auth);
+          setUser(null);
+          return;
+        }
+  
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
-          role: "user", // default; we'll refine below
+          role: role || "user",
           name: firebaseUser.displayName || "",
           emailVerified: firebaseUser.emailVerified,
         });
-      } else {
-        setUser(null);
-      }
-      setLoading(false); // never block UI
-  
-      // 2) Enrich user with role/active in the background (non-blocking)
-      (async () => {
-        try {
-          if (!firebaseUser) return;
-          const roleSnap = await getDoc(doc(db, "roles", firebaseUser.uid));
-          const role = roleSnap.exists() ? roleSnap.data().role : "user";
-  
-          const userSnap = await getDoc(doc(db, "users", firebaseUser.uid));
-          const active = userSnap.exists() ? userSnap.data().active !== false : true;
-  
-          if (!active) {
-            await signOut(auth);
-            setUser(null);
-            return;
-          }
-  
-          setUser((prev) => prev ? { ...prev, role } : prev);
-        } catch (err) {
-          console.warn("Non-blocking role/active fetch failed:", err);
-          // keep the base user so login still works
+      } catch (err) {
+        console.warn("Non-blocking role/active fetch failed:", err);
+       
+        if (firebaseUser) {
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            role: "user",
+            name: firebaseUser.displayName || "",
+            emailVerified: firebaseUser.emailVerified,
+          });
+        } else {
+          setUser(null);
         }
-      })();
+      } finally {
+        setLoading(false);
+      }
     });
   
     return () => unsub();
   }, []);
+  
+  
   
 
   async function login(email, password, remember = true) {

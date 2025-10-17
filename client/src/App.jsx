@@ -1,4 +1,3 @@
-
 import "./styles/app.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
@@ -17,16 +16,18 @@ import AccountSettingsPage from "@/pages/AccountSettingsPage.jsx";
 import SubheaderTabs from "./components/SubheaderTabs.jsx";
 import About from "@/pages/About.jsx";
 import Support from "@/pages/Support.jsx";
-
 import { useAuth } from "@/lib/use-auth.js";
 
-
 export default function App() {
-    const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+
   return (
     <div className="app">
       <Navbar />
-      {user && <SubheaderTabs />}
+      {user && user.role !== "admin" && <SubheaderTabs />}
+
       <main className="app-main">
         <Routes>
           <Route path="/" element={<Navigate to="/categories/Education" replace />} />
@@ -35,15 +36,9 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot" element={<ForgotPasswordPage />} />
-
           <Route path="/verify" element={<VerifyPage />} />
-            {/* public */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            {/* public info pages */}
-            <Route path="/pages/About" element={<About />} />
-            <Route path="/pages/Support" element={<Support />} />
-
+          <Route path="/pages/About" element={<About />} />
+          <Route path="/pages/Support" element={<Support />} />
 
           {/* user protected */}
           <Route element={<ProtectedRoute />}>
@@ -53,16 +48,16 @@ export default function App() {
             <Route path="/account/settings" element={<AccountSettingsPage />} />
           </Route>
 
-           {/* admin protected */}
-           <Route element={<AdminRoute />}>
+          {/* admin protected */}
+          <Route element={<AdminRoute />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Route>
 
-          {/* fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-
+          {/* admin login (public) */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
 
+          {/* fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>

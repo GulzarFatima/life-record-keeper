@@ -108,6 +108,11 @@ export default function LoginPage() {
         <div className="aux-links" style={{ marginTop: 8 }}>
           <Link to="/forgot" className="aux-link">Forgot password?</Link>
         </div>
+
+        <div className="aux-links">
+        <Link className="aux-link" to="/admin/login">Admin sign in</Link>
+        </div>
+
       </form>
     </div>
   );

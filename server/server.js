@@ -6,8 +6,10 @@ import dotenv from "dotenv";
 
 import categoriesRoutes from "./routes/categories.routes.js";
 import recordsRoutes from "./routes/records.routes.js";
-import { requireAuth } from "./middleware/auth.js";
 import documentsRoutes from "./routes/documents.routes.js";
+import { requireAuth } from "./middleware/auth.js";
+import { requireAdmin } from "./middleware/requireAdmin.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config();
 
@@ -32,6 +34,14 @@ app.use("/api/v1/records", requireAuth, recordsRoutes);
 
 // Uploads under records path
 app.use("/api/v1/records", documentsRoutes);
+
+// Admin routes
+app.use("/api/v1/admin", requireAuth, requireAdmin, adminRoutes);
+
+app.get("/api/v1/admin/debug", requireAuth, requireAdmin, (req, res) => {
+  res.json({ uid: req.user?.uid, email: req.user?.email, ok: true });
+});
+
 
 const { MONGO_URI, PORT = 3000 } = process.env;
 
