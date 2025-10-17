@@ -17,6 +17,7 @@ import SubheaderTabs from "./components/SubheaderTabs.jsx";
 import About from "@/pages/About.jsx";
 import Support from "@/pages/Support.jsx";
 import { useAuth } from "@/lib/use-auth.js";
+import ShareViewer from "@/pages/ShareViewer.jsx";
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/pages/About" element={<About />} />
           <Route path="/pages/Support" element={<Support />} />
+          <Route path="/share/:token" element={<ShareViewer />} />
 
           {/* user protected */}
           <Route element={<ProtectedRoute />}>

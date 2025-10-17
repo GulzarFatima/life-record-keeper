@@ -10,6 +10,7 @@ import documentsRoutes from "./routes/documents.routes.js";
 import { requireAuth } from "./middleware/auth.js";
 import { requireAdmin } from "./middleware/requireAdmin.js";
 import adminRoutes from "./routes/admin.routes.js";
+import sharesRouter from "./routes/shares.routes.js";
 
 
 const app = express();
@@ -29,10 +30,11 @@ app.get("/api/v1/health", (req, res) => res.json({ ok: true }));
 app.use("/api/v1/categories", requireAuth, categoriesRoutes);
 app.use("/api/v1/records", requireAuth, recordsRoutes);
 
-
-
-// Uploads under records path
+// Document routes (upload/download)
 app.use("/api/v1/records", documentsRoutes);
+
+// Share links
+app.use("/api/v1", sharesRouter);
 
 // Admin routes
 app.use("/api/v1/admin", requireAuth, requireAdmin, adminRoutes);

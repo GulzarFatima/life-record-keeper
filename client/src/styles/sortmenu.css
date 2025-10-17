@@ -1,0 +1,39 @@
+.sortmenu { position: relative; display: inline-block; }
+
+.sortmenu__button { display: inline-flex; align-items: center; gap: 6px; }
+
+.sortmenu__caret { margin-left: 6px; }
+
+.sortmenu__popover {
+  position: absolute;
+  right: 0;
+  margin-top: 6px;
+  min-width: 220px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--line, #e5e7eb);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  padding: 6px;
+  z-index: 20;
+}
+
+.sortmenu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+}
+
+.sortmenu__item:hover,
+.sortmenu__item:focus { background: var(--line, #e5e7eb); }
+
+.sortmenu__item.is-active { background: var(--line, #e5e7eb); }
+
+.sortmenu__text { flex: 1; }
+.sortmenu__check { margin-left: 8px; }

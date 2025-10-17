@@ -1,12 +1,19 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/use-auth.js";
 import api from "@/lib/api";
 import NewRecordModal from "@/components/NewRecordModal.jsx";
 import ManageRecordModal from "@/components/ManageRecordModal.jsx";
 import ViewDocumentsModal from "@/components/ViewDocumentsModal.jsx";
+import SortMenu from "@/components/SortMenu.jsx";
+import ShareModal from "@/components/ShareModal.jsx";
+
+
 import "@/styles/category.css";
 import "@/styles/records-dashboard.css";
+import "@/styles/sortmenu.css";
+import "@/styles/modal.css";
+
 
 function timeAgo(iso) {
   if (!iso) return "—";
@@ -127,13 +134,17 @@ export default function CategoryPage() {
   const [docsId, setDocsId] = useState(null);
   const [rev, setRev] = useState(0);
 
+  const [sp] = useSearchParams();
+  const sort = sp.get("sort") || "-updatedAt";
+  const [showShare, setShowShare] = useState(false);
+
   useEffect(() => {
     let ignore = false;
     (async () => {
       if (loading || !user) return;
       setBusy(true); setErr("");
       try {
-        const data = await api.getRecordsByCategory(categoryName);
+        const data = await api.getRecordsByCategory(categoryName, { sort });
         if (!ignore) setRows(Array.isArray(data) ? data : []);
       } catch (e) {
         if (!ignore) setErr(e?.message || "Could not load records.");
@@ -142,7 +153,7 @@ export default function CategoryPage() {
       }
     })();
     return () => { ignore = true; };
-  }, [categoryName, user, loading, rev]);
+  }, [categoryName, user, loading, rev, sort]);
 
   if (loading || busy) return <p>Loading…</p>;
   if (err) return <p className="text-error">{err}</p>;
@@ -153,11 +164,11 @@ export default function CategoryPage() {
         <div className="dashboard-head">
           <h3 className="dashboard-title">{categoryName}</h3>
           <div className="dashboard-tools">
-            <button className="dashboard-tool" onClick={() => setShowNew(true)}>Add Record</button>
-            <span className="dashboard-tool">Sort</span>
-            <span className="dashboard-tool">Share</span>
-            <span className="dashboard-tool">Download Records</span>
-          </div>
+          <button className="dashboard-tool" onClick={() => setShowNew(true)}>Add Record</button>
+          <SortMenu />
+          <button className="dashboard-tool" onClick={() => setShowShare(true)}>Share</button>
+          <span className="dashboard-tool">Download Records</span>
+        </div>
         </div>
 
         <div className="edu-list">
@@ -172,6 +183,13 @@ export default function CategoryPage() {
           ))}
         </div>
       </div>
+
+      {showShare && (
+        <ShareModal
+          categoryName={categoryName}
+          onClose={() => setShowShare(false)}
+        />
+      )}
 
       {showNew && (
         <NewRecordModal

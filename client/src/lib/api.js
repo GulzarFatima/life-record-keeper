@@ -46,11 +46,33 @@ export async function getCategories() {
   return request(`/categories`);
 }
 
-/** GET /records?category=Education -> list of records for that category */
-export async function getRecordsByCategory(categoryName) {
-  const q = encodeURIComponent(categoryName);
-  return request(`/records?category=${q}`);
+/// /** GET /records?category=Education&sort=title -> list of records for that category */
+export async function getRecordsByCategory(categoryName, { sort } = {}) {
+  const qs = new URLSearchParams();
+  qs.set("category", categoryName);
+  if (sort) qs.set("sort", sort);
+  return request(`/records?${qs.toString()}`);
 }
+
+export async function createCategoryShare({ categoryName, includeDocs, ttlHours = 72 }) {
+  return request(`/shares/category`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ categoryName, includeDocs: !!includeDocs, ttlHours }),
+  });
+}
+
+export async function loadPublicShare(token) {
+  return request(`/public/shares/${encodeURIComponent(token)}`);
+}
+
+
+
+// /** GET /records?category=Education -> list of records for that category */
+// export async function getRecordsByCategory(categoryName) {
+//   const q = encodeURIComponent(categoryName);
+//   return request(`/records?category=${q}`);
+// }
 
 /** POST /records  -> create new record
  *  payload shape depends on category (Education/Career/Travel, etc.)
@@ -136,6 +158,10 @@ export default {  getCategories,
   deleteRecord,
   listDocuments,
   uploadDocuments,
-  deleteDocument, admin };
+  deleteDocument, 
+  admin, 
+  createCategoryShare,
+  loadPublicShare, 
+};
 
 

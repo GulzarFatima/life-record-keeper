@@ -46,6 +46,7 @@ router.get("/", async (req, res) => {
 
     const categoryName = req.query.category || req.query.categoryName;
     const categoryId = req.query.categoryId;
+    const sortParam = req.query.sort; // "-updatedAt" | "updatedAt" | "-date" | "date"
 
     let catId = categoryId;
     if (!catId) {
@@ -58,8 +59,27 @@ router.get("/", async (req, res) => {
       catId = cat._id;
     }
 
+    // Build sort object for the four allowed options
+    // "date" maps to endDate → startDate → createdAt as fallbacks
+    let sortObj;
+    switch (sortParam) {
+      case "updatedAt":
+        sortObj = { updatedAt: 1, createdAt: 1 };
+        break;
+      case "-date":
+        sortObj = { endDate: -1, startDate: -1, createdAt: -1 };
+        break;
+      case "date":
+        sortObj = { endDate: 1, startDate: 1, createdAt: 1 };
+        break;
+      case "-updatedAt":
+      default:
+        sortObj = { updatedAt: -1, createdAt: -1 }; // default: Recently updated
+        break;
+    }
+
     const rows = await Record.find({ userId: uid, categoryId: catId })
-      .sort({ updatedAt: -1, createdAt: -1 })
+      .sort(sortObj)
       .lean();
 
     res.json(rows);
