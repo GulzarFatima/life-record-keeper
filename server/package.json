@@ -1,5 +1,5 @@
 {
-  "name": "life-record-keeper-server",
+  "name": "lrk-api",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

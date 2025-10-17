@@ -1,4 +1,4 @@
-import "dotenv/config"; 
+import "dotenv/config";
 import path from "path";
 import express from "express";
 import mongoose from "mongoose";
@@ -12,19 +12,31 @@ import { requireAdmin } from "./middleware/requireAdmin.js";
 import adminRoutes from "./routes/admin.routes.js";
 import sharesRouter from "./routes/shares.routes.js";
 
-
 const app = express();
-app.use(cors({ origin: "http://localhost:5173" }));
+
+// ---------- Middleware ----------
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-hosting-domain.web.app",
+  "https://your-custom-domain.com",
+];
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // curl / health checks
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(null, true); 
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
 
-
-// serve uploaded files
+// Serve uploaded files 
 const uploadsDir = path.join(process.cwd(), "server", "uploads");
 app.use("/uploads", express.static(uploadsDir));
 
-
+// Health endpoint 
 app.get("/api/v1/health", (req, res) => res.json({ ok: true }));
-
 
 // Protected routes
 app.use("/api/v1/categories", requireAuth, categoriesRoutes);
@@ -43,20 +55,24 @@ app.get("/api/v1/admin/debug", requireAuth, requireAdmin, (req, res) => {
   res.json({ uid: req.user?.uid, email: req.user?.email, ok: true });
 });
 
+// Global error handler
 app.use((err, req, res, next) => {
   console.error("Global error:", err);
-  const status = err.status || 500;
-  res.status(status).json({ error: err?.message || "Internal Server Error" });
+  res.status(err.status || 500).json({ error: err?.message || "Internal Server Error" });
 });
 
-const { MONGO_URI, PORT = 3000 } = process.env;
+// ---------- Startup ----------
+const PORT = Number(process.env.PORT) || 8080;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("API listening on", PORT);
+});
 
-mongoose.connect(MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected");
-    app.listen(PORT, () => console.log(`API running: http://localhost:${PORT}`));
-  })
-  .catch(err => {
-    console.error("Mongo error:", err.message);
-    process.exit(1);
-  });
+// Connect to Mongo *after* starting the server 
+const { MONGO_URI } = process.env;
+if (MONGO_URI) {
+  mongoose.connect(MONGO_URI)
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.error("Mongo error:", err.message));
+} else {
+  console.warn("MONGO_URI not set; skipping MongoDB connect");
+}
